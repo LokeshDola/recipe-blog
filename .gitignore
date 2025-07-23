@@ -1,0 +1,10 @@
+# Python/Flask backend
+backend/venv/
+backend/__pycache__/
+backend/instance/
+backend/database.db
+
+# Node/React frontend
+frontend/node_modules/
+frontend/build/
+frontend/.env
