@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+const API_URL = "http://127.0.0.1:5000";
+
 function AddRecipePage() {
     const [title, setTitle] = useState('');
     const [ingredients, setIngredients] = useState('');
@@ -10,7 +12,6 @@ function AddRecipePage() {
     const [imageFile, setImageFile] = useState(null);
     const [category, setCategory] = useState('Indian');
     const navigate = useNavigate();
-    const API_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:5000";
     
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -41,10 +42,7 @@ function AddRecipePage() {
                 <div style={{ marginBottom: '1rem' }}>
                     <label>Category</label>
                     <select value={category} onChange={e => setCategory(e.target.value)} required style={{ width: '100%', padding: '8px' }}>
-                        <option value="Indian">Indian</option>
-                        <option value="Italian">Italian</option>
-                        <option value="Chinese">Chinese</option>
-                        <option value="Dessert">Dessert</option>
+                        <option value="Indian">Indian</option> <option value="Italian">Italian</option> <option value="Chinese">Chinese</option> <option value="Dessert">Dessert</option>
                     </select>
                 </div>
                 <div style={{ marginBottom: '1rem' }}><label>Image</label><input type="file" onChange={e => setImageFile(e.target.files[0])} accept="image/*" required style={{ width: '100%', padding: '8px' }}/></div>
