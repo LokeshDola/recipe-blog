@@ -7,7 +7,7 @@ from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
-basedir = os.path.abspath(os.path.dirname(__file__))
+basedir = os.path.abspath(os.path.dirname(__file__)).replace('\\', '/')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'database.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 UPLOAD_FOLDER = 'uploads'
@@ -45,42 +45,31 @@ class Review(db.Model):
         return { "id": self.id, "rating": self.rating, "comment": self.comment, "timestamp": self.timestamp.strftime('%Y-%m-%d %H:%M:%S'), "user": self.user.username }
 
 def validate_password(password):
-    if len(password) < 8 or not re.search("[a-z]", password) or not re.search("[A-Z]", password) or not re.search("[0-9]", password) or not re.search("[!@#$%^&*()]", password):
-        return False
+    if len(password) < 8 or not re.search("[a-z]", password) or not re.search("[A-Z]", password) or not re.search("[0-9]", password) or not re.search("[!@#$%^&*()]", password): return False
     return True
-
 @app.route('/uploads/<filename>')
 def uploaded_file(filename): return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-
 @app.route('/api/register', methods=['POST'])
 def register():
     data = request.get_json(); username = data.get('username'); password = data.get('password')
     if not all([username, password]): return jsonify({"error": "Username and password are required"}), 400
     if User.query.filter_by(username=username).first(): return jsonify({"error": "Username is already taken"}), 409
     if not validate_password(password): return jsonify({"error": "Password does not meet complexity requirements"}), 400
-    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-    new_user = User(username=username, password=hashed_password)
-    db.session.add(new_user); db.session.commit()
+    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8'); new_user = User(username=username, password=hashed_password); db.session.add(new_user); db.session.commit()
     return jsonify({"message": "User registered successfully"}), 201
-
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json(); username = data.get('username'); password = data.get('password')
     user = User.query.filter_by(username=username).first()
-    if user and bcrypt.check_password_hash(user.password, password):
-        return jsonify({"message": "Login successful", "user": {"id": user.id, "username": user.username}}), 200
+    if user and bcrypt.check_password_hash(user.password, password): return jsonify({"message": "Login successful", "user": {"id": user.id, "username": user.username}}), 200
     return jsonify({"error": "Invalid username or password"}), 401
-
 @app.route('/api/recipes', methods=['GET'])
 def get_all_recipes(): return jsonify([recipe.to_dict() for recipe in Recipe.query.all()])
-
-# THIS IS THE MISSING FUNCTION
 @app.route('/api/recipes/<int:recipe_id>', methods=['GET'])
 def get_recipe(recipe_id):
     recipe = Recipe.query.get(recipe_id)
     if recipe: return jsonify(recipe.to_dict())
     return jsonify({"error": "Recipe not found"}), 404
-
 @app.route('/api/recipes', methods=['POST'])
 def add_recipe():
     if 'image' not in request.files: return jsonify({"error": "No image file provided"}), 400
@@ -90,7 +79,6 @@ def add_recipe():
     data = request.form
     new_recipe = Recipe(title=data['title'], cook_time=int(data['cookTime']), image=f"/uploads/{filename}", ingredients=data['ingredients'], instructions=data['instructions'], user_id=int(data['userId']), category=data['category'])
     db.session.add(new_recipe); db.session.commit(); return jsonify(new_recipe.to_dict()), 201
-
 @app.route('/api/recipes/<int:recipe_id>', methods=['PUT'])
 def update_recipe(recipe_id):
     recipe = Recipe.query.get(recipe_id)
@@ -103,12 +91,10 @@ def update_recipe(recipe_id):
             filename = file.filename; file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename)); recipe.image = f"/uploads/{filename}"
     recipe.title = data.get('title', recipe.title); recipe.cook_time = int(data.get('cookTime', recipe.cook_time)); recipe.ingredients = data.get('ingredients', recipe.ingredients); recipe.instructions = data.get('instructions', recipe.instructions); recipe.category = data.get('category', recipe.category)
     db.session.commit(); return jsonify(recipe.to_dict()), 200
-
 @app.route('/api/recipes/<int:recipe_id>/reviews', methods=['GET'])
 def get_reviews(recipe_id):
     reviews = Review.query.filter_by(recipe_id=recipe_id).order_by(Review.timestamp.desc()).all()
     return jsonify([review.to_dict() for review in reviews])
-
 @app.route('/api/recipes/<int:recipe_id>/reviews', methods=['POST'])
 def post_review(recipe_id):
     data = request.get_json(); user_id = data.get('userId'); rating = data.get('rating'); comment = data.get('comment')
@@ -133,9 +119,7 @@ def seed_database():
             Recipe(title="Kung Pao Chicken", cook_time=30, image="/uploads/kungpao.jpg", ingredients="Chicken\nPeanuts\nBell Peppers\nSoy Sauce\nVinegar", instructions="Marinate chicken.\nStir-fry ingredients.\nAdd sauce.", user_id=user1.id, category="Chinese"),
             Recipe(title="Spring Rolls", cook_time=25, image="/uploads/springrolls.jpg", ingredients="Wrappers\nCabbage\nCarrots\nBean Sprouts", instructions="Prepare filling.\nWrap and fry until golden.", user_id=user1.id, category="Chinese"),
             Recipe(title="Chocolate Lava Cake", cook_time=22, image="/uploads/chocolava.jpg", ingredients="Dark Chocolate\nButter\nEggs\nSugar\nFlour", instructions="Melt chocolate and butter.\nWhisk eggs and sugar.\nCombine and bake.", user_id=user1.id, category="Dessert"),
-            Recipe(title="Classic Cheesecake", cook_time=90, image="/uploads/chesecake.jpg", ingredients="Cream Cheese\nSugar\nEggs\nGraham Cracker Crust\nVanilla", instructions="Make crust.\nMix filling.\nBake and chill.", user_id=user1.id, category="Dessert"),
-            Recipe(title="Fudgy Brownies", cook_time=40, image="/uploads/brownies.jpg", ingredients="Flour\nCocoa Powder\nSugar\nButter\nEggs", instructions="Melt butter and chocolate.\nMix in other ingredients.\nBake until set.", user_id=user1.id, category="Dessert"),
-            Recipe(title="Classic Tiramisu", cook_time=30, image="/uploads/classictiramisu.jpg", ingredients="Ladyfingers\nEspresso\nMascarpone\nEggs\nCocoa Powder", instructions="Dip ladyfingers in coffee.\nLayer with mascarpone cream.\nChill and dust with cocoa.", user_id=user1.id, category="Dessert")
+            Recipe(title="Classic Cheesecake", cook_time=90, image="/uploads/chesecake.jpg", ingredients="Cream Cheese\nSugar\nEggs\nGraham Cracker Crust\nVanilla", instructions="Make crust.\nMix filling.\nBake and chill.", user_id=user1.id, category="Dessert")
         ]
         db.session.add_all(recipes_to_add); db.session.commit()
 

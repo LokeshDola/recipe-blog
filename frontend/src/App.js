@@ -15,11 +15,8 @@ function App() {
     <Router>
       <Navbar />
       <Routes>
-        {/* Public Routes */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        
-        {/* Protected Routes */}
         <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
         <Route path="/recipe/:id" element={<ProtectedRoute><RecipeDetailPage /></ProtectedRoute>} />
         <Route path="/add-recipe" element={<ProtectedRoute><AddRecipePage /></ProtectedRoute>} />
@@ -28,5 +25,4 @@ function App() {
     </Router>
   );
 }
-
 export default App;

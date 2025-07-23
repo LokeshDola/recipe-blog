@@ -2,7 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 function RecipeCard({ recipe }) {
-    const API_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:5000";
+    const API_URL = "http://127.0.0.1:5000";
+
+    const imageUrl = recipe.image.startsWith('/uploads')
+        ? `${API_URL}${recipe.image}`
+        : recipe.image;
 
     const getIngredientText = (count) => {
         if (!count) return '';
@@ -12,7 +16,7 @@ function RecipeCard({ recipe }) {
 
     return (
         <Link to={`/recipe/${recipe.id}`} className="recipe-card">
-            <img src={`${API_URL}${recipe.image}`} alt={recipe.title} />
+            <img src={imageUrl} alt={recipe.title} />
             <div className="recipe-card-content">
                 <h3>{recipe.title}</h3>
                 <div className="recipe-card-meta">
@@ -23,5 +27,4 @@ function RecipeCard({ recipe }) {
         </Link>
     );
 }
-
 export default RecipeCard;
