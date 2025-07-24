@@ -2,8 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 function RecipeCard({ recipe }) {
-    const API_URL = "http://127.0.0.1:5000";
+    // UPDATED for deployment
+    const API_URL = process.env.REACT_APP_API_URL;
 
+    // This logic handles both local images (from uploads) and internet URLs
     const imageUrl = recipe.image.startsWith('/uploads')
         ? `${API_URL}${recipe.image}`
         : recipe.image;
@@ -27,4 +29,5 @@ function RecipeCard({ recipe }) {
         </Link>
     );
 }
+
 export default RecipeCard;

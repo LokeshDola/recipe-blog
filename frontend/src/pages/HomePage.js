@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import RecipeCard from '../components/RecipeCard';
 
-const API_URL = process.env.REACT_APP_API_URL; // UPDATED FOR DEPLOYMENT
+const API_URL = process.env.REACT_APP_API_URL; // UPDATED for deployment
 
 function HomePage() {
+    // ... rest of the component is unchanged
     const [recipes, setRecipes] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
