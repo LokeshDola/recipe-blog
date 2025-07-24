@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 
-const API_URL = "http://127.0.0.1:5000";
+const API_URL = process.env.REACT_APP_API_URL; // UPDATED FOR DEPLOYMENT
 
 // Star Rating Component
 const StarRating = ({ rating }) => {
@@ -51,8 +51,7 @@ function RecipeDetailPage() {
                 comment: newComment,
                 userId: loggedInUser.id
             });
-            setNewRating(5);
-            setNewComment('');
+            setNewRating(5); setNewComment('');
             fetchReviews();
         } catch (error) { alert(error.response?.data?.error || 'Failed to post review.'); }
     };
@@ -93,4 +92,4 @@ function RecipeDetailPage() {
         </div>
     );
 }
-export default RecipeDetailPage;    
+export default RecipeDetailPage;

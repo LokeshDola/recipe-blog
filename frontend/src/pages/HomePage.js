@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import RecipeCard from '../components/RecipeCard';
 
-const API_URL = "http://127.0.0.1:5000";
+const API_URL = process.env.REACT_APP_API_URL; // UPDATED FOR DEPLOYMENT
 
 function HomePage() {
     const [recipes, setRecipes] = useState([]);

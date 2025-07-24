@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const API_URL = "http://127.0.0.1:5000";
+const API_URL = process.env.REACT_APP_API_URL; // UPDATED FOR DEPLOYMENT
 
 function EditRecipePage() {
     const { id } = useParams();
@@ -50,8 +50,17 @@ function EditRecipePage() {
                 <div style={{ marginBottom: '1rem' }}><label>Ingredients</label><textarea value={ingredients} onChange={e => setIngredients(e.target.value)} required style={{ width: '100%', padding: '8px', minHeight: '120px' }}></textarea></div>
                 <div style={{ marginBottom: '1rem' }}><label>Instructions</label><textarea value={instructions} onChange={e => setInstructions(e.target.value)} required style={{ width: '100%', padding: '8px', minHeight: '150px' }}></textarea></div>
                 <div style={{ marginBottom: '1rem' }}><label>Cook Time (minutes)</label><input type="number" value={cookTime} onChange={e => setCookTime(e.target.value)} required style={{ width: '100%', padding: '8px' }}/></div>
-                <div style={{ marginBottom: '1rem' }}><label>Category</label><select value={category} onChange={e => setCategory(e.target.value)} required style={{ width: '100%', padding: '8px' }}><option value="Indian">Indian</option><option value="Italian">Italian</option><option value="Chinese">Chinese</option><option value="Dessert">Dessert</option></select></div>
-                <div style={{ marginBottom: '1rem' }}><label>Change Image (Optional)</label>{currentImageUrl && <img src={currentImageUrl} alt="Current recipe" style={{ width: '100%', borderRadius: '8px', margin: '10px 0' }} />}<input type="file" onChange={e => setImageFile(e.target.files[0])} accept="image/*" style={{ width: '100%', padding: '8px' }}/></div>
+                <div style={{ marginBottom: '1rem' }}>
+                    <label>Category</label>
+                    <select value={category} onChange={e => setCategory(e.target.value)} required style={{ width: '100%', padding: '8px' }}>
+                        <option value="Indian">Indian</option><option value="Italian">Italian</option><option value="Chinese">Chinese</option><option value="Dessert">Dessert</option>
+                    </select>
+                </div>
+                <div style={{ marginBottom: '1rem' }}>
+                    <label>Change Image (Optional)</label>
+                    {currentImageUrl && <img src={currentImageUrl} alt="Current recipe" style={{ width: '100%', borderRadius: '8px', margin: '10px 0' }} />}
+                    <input type="file" onChange={e => setImageFile(e.target.files[0])} accept="image/*" style={{ width: '100%', padding: '8px' }}/>
+                </div>
                 <button type="submit" style={{ padding: '10px 20px' }}>Update Recipe</button>
             </form>
         </div>

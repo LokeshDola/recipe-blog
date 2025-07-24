@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 
-const API_URL = "http://127.0.0.1:5000";
+const API_URL = process.env.REACT_APP_API_URL; // UPDATED FOR DEPLOYMENT
 
 function RegisterPage() {
     const [username, setUsername] = useState('');
@@ -22,10 +22,7 @@ function RegisterPage() {
     const handleRegister = async (e) => {
         e.preventDefault();
         setError('');
-        if (!isPasswordValid) {
-            setError('Password does not meet all requirements.');
-            return;
-        }
+        if (!isPasswordValid) { setError('Password does not meet all requirements.'); return; }
         try {
             await axios.post(`${API_URL}/api/register`, { username, password });
             navigate('/login');
@@ -39,11 +36,7 @@ function RegisterPage() {
             <form onSubmit={handleRegister}>
                 <h1>Register</h1>
                 {error && <p style={{ color: 'red' }}>{error}</p>}
-                
-                <div style={{ marginBottom: '1rem' }}>
-                    <label>Create Username</label>
-                    <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} required style={{ width: '100%', padding: '8px' }} />
-                </div>
+                <div style={{ marginBottom: '1rem' }}><label>Create Username</label><input type="text" value={username} onChange={(e) => setUsername(e.target.value)} required style={{ width: '100%', padding: '8px' }} /></div>
                 <div style={{ marginBottom: '1rem' }}>
                     <label>Create Password</label>
                     <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required style={{ width: '100%', padding: '8px' }} />
@@ -57,9 +50,7 @@ function RegisterPage() {
                 </div>
                 <button type="submit" disabled={!isPasswordValid} style={{ width: '100%', padding: '10px' }}>Register</button>
             </form>
-             <p style={{ textAlign: 'center', marginTop: '1rem' }}>
-                Already have an account? <Link to="/login">Login here</Link>
-            </p>
+             <p style={{ textAlign: 'center', marginTop: '1rem' }}>Already have an account? <Link to="/login">Login here</Link></p>
         </div>
     );
 }
